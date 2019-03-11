@@ -22,7 +22,7 @@ $(document).ready(function(){
     
     //Clicked buttons name to show gifs
     $(document).on("click", ".action", function(e){
-        if(debug) {console.log("EVENT: Click on a gif button", this)}
+        if(debug) {console.log("EVENT: Clicked on a gif button", this)}
         event.preventDefault();
 
         this.buttonPressed = $(this).attr("data-name");
@@ -31,7 +31,7 @@ $(document).ready(function(){
 
     //Clicked 'Add' a new gif category/name
     $("#btn-add").on("click", function(event){
-        if(debug) {console.log("EVENT: Click on ADD", this)}
+        if(debug) {console.log("EVENT: Clicked on ADD", this)}
         event.preventDefault();
         var newButtonName = $("#gif-input").val();
         newButtonName = newButtonName.trim();
@@ -42,12 +42,24 @@ $(document).ready(function(){
         $("#gif-input").val("");
     });
 
+    //Clicked on a img to toggle play/pause
+    $(document).on("click", ".gif", function(){
+        if(debug) {console.log("EVENT: Click on an <img>", this)}
+        //swap the "src" and "data-swap" which effectively toggles the play/pause
+        var source = $(this).attr("src");
+        $(this).attr("src", $(this).attr("data-swap"));
+        $(this).attr("data-swap", source);
+    });
+
+
     // TODO: do this functionality
     //Clicked on I'm having fun!(See More)
     $("#btn-see-more").on("click", function(event){
-        if(debug) {console.log("EVENT: Click on See More", this)}
+        if(debug) {console.log("EVENT: Clicked on See More", this)}
         event.preventDefault();
+        // TODO: add 10 more gifs for each click
     });
+
 });
 
 function showMeThegifs(name) {
@@ -78,7 +90,8 @@ function displayGifs(data){
 
     data.data.forEach(function(gif){
         if(debug) {console.log("displaying a gif")}
-        var imgElement = $("<img>").attr("src",gif.images.fixed_height_small.url).addClass("m-2 border rounded");
+        var imgElement = $("<img>").attr({"src":gif.images.fixed_height_small_still.url, "data-swap":gif.images.fixed_height_small.url})
+                .addClass("gif m-2 border rounded");
         $("#gifs").append(imgElement);
     });
 }
@@ -87,6 +100,7 @@ function clear_gifs (){
     $("#gifs").empty();
 }
 
+// BUTTONS Galore 
 function showSeeMore() {
     $("#btn-see-more").show();
 }
