@@ -2,3 +2,18 @@
     font-family: 'Faster One', cursive;
     font-size: 2rem;
 }
+#brand-g {
+    color: red;
+}
+#brand-i {
+    color: magenta;
+}
+#brand-f {
+    color: green;
+}
+#brand-s {
+    color: blue;
+}
+#brand-x {
+    color: #000;
+}
