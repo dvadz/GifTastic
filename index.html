@@ -13,7 +13,13 @@
 </head>
 <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <a class="navbar-brand" href="#">Gifs!</a>
+                <a class="navbar-brand" href="#">
+                    <span id="brand-g">G</span>
+                    <span id="brand-i">i</span>
+                    <span id="brand-f">f</span>
+                    <span id="brand-s">s</span>
+                    <span id="brand-x">!</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
@@ -33,7 +39,7 @@
                     </li>
                   </ul>
                   <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="New category" aria-label="Search">
+                    <input id="gif-input" class="form-control mr-sm-2" type="search" placeholder="New category" aria-label="Search">
                     <button id="btn-add" class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
                   </form>
                 </div>
@@ -42,10 +48,13 @@
         <div id="btn-gif" class="border">
             <button class="action btn btn-sm btn-outline-primary" data-name = "keanu+reeves">keanu reeves</button>
         </div>
-        <div id="gifs" class="row my-2"> </div>
+    
+        <div id="gifs" class="row my-2 justify-content-around">
         <!-- gifs go in here -->
+        </div>
+    
         <div class="row justify-content-center my-4 justify-content-between">
-            <a href="#" class="" title="Load more gifs">I'm having fun!</a>
+            <a id="btn-see-more" href="#" class="collapse" title="Load more gifs">I'm having fun!</a>
         </div>
     </div>
     
