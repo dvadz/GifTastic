@@ -1,25 +1,30 @@
 .navbar-brand {
     font-family: 'Faster One', cursive;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 #brand-g {
     color: red;
 }
 #brand-i {
-    color: magenta;
-}
-#brand-f {
-    color: green;
-}
-#brand-s {
     color: orange;
 }
-#brand-x {
-    color: yellowgreen;
+#brand-f {
+    color: purple;
+}
+#brand-s {
+    color: magenta;
 }
 img {
     max-height: 200px;
 }
 img:hover {
     cursor: pointer;
+}
+#delete:hover {
+    cursor: default;
+    color: rgb(255, 55, 81);
+}
+#delete {
+    color: rgb(240, 239, 239);
+    font-size: .5rem;
 }
