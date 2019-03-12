@@ -12,8 +12,14 @@
     color: green;
 }
 #brand-s {
-    color: blue;
+    color: orange;
 }
 #brand-x {
-    color: #000;
+    color: yellowgreen;
+}
+img {
+    max-height: 200px;
+}
+img:hover {
+    cursor: pointer;
 }
