@@ -3,16 +3,13 @@
 var debug = true;
 
 var gifApp = {
-     tagNames: []
-    ,currentTagName: ""
+     topics: []
+    ,currentTopic: ""
     ,currentButton: ""    //TODO: still unused
     ,data: {}
     ,status: 0
     ,startAt: 0
     ,limit: 10
-    ,isMobile: false
-    ,gifRegularURL: ""
-    ,gifMobileURL: ""
 }
 
 function start(){
@@ -25,25 +22,25 @@ function start(){
 $(document).ready(function(){
     console.log("document is ready!")
 
+    console.log(document.documentElement.clientWidth);
     start();
     
-    //Clicked on a tagname button to show gifs
+    //Clicked on a topic button to show gifs
     $(document).on("click", ".action", function(e){
         if(debug) {console.log("EVENT: Clicked on a gif button", this)}
         event.preventDefault();
 
-        gifApp.currentTagName = $(this).attr("data-tagname");
-        showMeThegifs(gifApp.currentTagName);
+        gifApp.currentTopic = $(this).attr("data-topic");
+        showMeThegifs(gifApp.currentTopic);
     });
 
-    //Clicked 'Add' to add a new gif tagname
+    //Clicked 'Add' to add a new topic
     $("#btn-add").on("click", function(event){
         if(debug) {console.log("EVENT: Clicked on ADD", this)}
         event.preventDefault();
-        var newTagNameButton = $("#gif-input").val();
-        newTagNameButton = newTagNameButton.trim();
-        if(newTagNameButton.length>2){
-            addANewButton(newTagNameButton);
+        var newTopic = $("#gif-input").val().trim();
+        if(newTopic.length>2){
+            addANewTopic(newTopic);
         }
         //clear the input
         $("#gif-input").val("");
@@ -63,7 +60,24 @@ $(document).ready(function(){
         event.preventDefault();
         gifApp.startAt += 10;
         gifApp.limit += 10;
-        sendRequest(gifApp.currentTagName);
+        sendRequest(gifApp.currentTopic);
+    });
+
+    //React to mobile orientation change
+    $(window).on("orientationchange", function(event){
+        if(debug){console.log("EVENT: orientation changed", window.orientation)};
+        // portrait: 0
+        // portrait (upside down): 180 
+        // landscape: (counterclockwise): 90
+        // landscape: (clockwise): -90
+        // if(window.orientation===90 || window.orientation===-90) landscape
+    });
+
+    //Clicked on the 'x' icon to delete
+    $(document).on("click","#delete", function(){
+        if(debug){console.log("EVENT: clicked on trash icon: ", $(this).attr("data-topic"))};
+        return false;
+
     });
 
 });
@@ -76,17 +90,17 @@ function togglePlay() {
     $(this).attr("data-swap", source);
 }
 
-function showMeThegifs(tagName) {
+function showMeThegifs(topic) {
     if(debug){console.log("Function: showMeTheGifs")}
     initialize();
-    sendRequest(tagName);
+    sendRequest(topic);
 }
 
-function sendRequest(tagName) {
+function sendRequest(topic) {
     if(debug) {console.log("Function: sendRequest")}
 
-    tagName = tagName.replace(' ', '+');
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + tagName + "&api_key=QGiMzQfps4Yv5V60bBIA91Y3h4wL1qOX&rating=g&limit=" + gifApp.limit;
+    topic = topic.replace(' ', '+');
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=QGiMzQfps4Yv5V60bBIA91Y3h4wL1qOX&rating=g&limit=" + gifApp.limit;
     if(debug) {console.log(queryURL)}
 
     gifApp.status = 0;
@@ -109,19 +123,20 @@ function sendRequest(tagName) {
 function displayGifs(data){
     if(debug) {console.log("Function: displayGifs")}
 
-    // data.data.forEach(function(gif){
-    //     if(debug) {console.log("displaying a gif")}
-    //     var imgElement = $("<img>").attr({"src":gif.images.fixed_width_still.url, "data-swap":gif.images.fixed_width.url})
-    //             .addClass("gif m-2 border rounded");  //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
-    //     $("#gifs").append(imgElement);
-    // });
+    var startAt = gifApp.startAt,
+        gifs = data.data,
+        imgElement,
+        isSmall = (document.documentElement.clientWidth<400) ? true : false ;
 
-    var startAt = gifApp.startAt;
-    var gifs = data.data;
     for( var i = 0; i < 10; i++ ){
         if(debug) {console.log("displaying a gif")}
-        var imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_still.url, "data-swap":gifs[startAt+i].images.fixed_width.url})
-                .addClass("gif m-2 border rounded");  //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
+        if(isSmall) {
+            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_small_still.url, "data-swap":gifs[startAt+i].images.fixed_width_small.url})
+            .addClass("gif m-2 border rounded");          //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
+        } else {
+            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_still.url, "data-swap":gifs[startAt+i].images.fixed_width.url})
+            .addClass("gif m-2 border rounded");  //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
+        } 
         $("#gifs").append(imgElement);
     }
 }
@@ -143,33 +158,43 @@ function hideSeeMore() {
 
 function restoreButtons(){
     if(debug){console.log("Function: restoreButtons")}
-    var list = localStorage.getItem("tagNames");
+    var list = localStorage.getItem("topics");
     
-    //null is returned if 'tagNames' does not exist, i.e. first run ever
+    //null is returned if 'topics' does not exist, i.e. first run ever
     if(list!=null) {
         $("#btn-gif").empty();
-        gifApp.tagNames = JSON.parse(list);
-        //loop thru the list and make buttons for each
-        gifApp.tagNames.forEach(function(tagName){
-            displayAButton(tagName);
+        gifApp.topics = JSON.parse(list);
+        //make a button for each topic
+        gifApp.topics.forEach(function(topic){
+            displayAButton(topic);
         });
         } else {
-        console.log("this is the firs time has run, so no list yet")
+        console.log("there are no topics, please add some")
         return false;
     }
  }
 
-function addANewButton(newTagNameButton) {
-    if(debug){console.log("Function: addANewButton", newTagNameButton, gifApp.tagNames)}
+function addANewTopic(newTopic) {
+    if(debug){console.log("Function: addANewTopic", newTopic, gifApp.topics)}
 
-    //save the new button into the array then into localstorage
-    gifApp.tagNames.push(newTagNameButton);
-    localStorage.setItem("tagNames", JSON.stringify(gifApp.tagNames));
-    //display the new button
-    displayAButton(newTagNameButton);
+    //add new topic into the array then save into localstorage
+    saveNewTopicIntoTheList(newTopic);
+    storeTopicsToLocalStorage();
+     //display the new button
+    displayAButton(newTopic);
 }
 
-function displayAButton(tagName) {
-    var buttonElement = $("<button></button>").addClass("action btn btn-sm btn-outline-primary m-1").attr("data-tagname", tagName).text(tagName);
+function saveNewTopicIntoTheList(newTopic){
+    gifApp.topics.push(newTopic);
+}
+
+function storeTopicsToLocalStorage() {
+    localStorage.setItem("topics", JSON.stringify(gifApp.topics));
+}
+
+function displayAButton(topic) {
+    var deleteIcon = $("<span id='delete' >&#9747</span>").attr({"data-topic": topic, "title": "remove this topic"});
+    var buttonElement = $("<button></button>").addClass("action btn btn-sm btn-outline-primary m-1")
+            .attr("data-topic", topic).text(topic).append(" ", deleteIcon);
     $("#btn-gif").append(buttonElement);
 }
