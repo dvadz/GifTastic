@@ -26,5 +26,8 @@ img:hover {
 }
 #delete {
     color: rgb(240, 239, 239);
-    font-size: .5rem;
+    font-size: .7rem;
+}
+form {
+    display: flex;
 }

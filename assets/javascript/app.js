@@ -22,7 +22,7 @@ function start(){
 $(document).ready(function(){
     console.log("document is ready!")
 
-    console.log(document.documentElement.clientWidth);
+    if(debug){console.log("width: ",document.documentElement.clientWidth);}
     start();
     
     //Clicked on a topic button to show gifs
@@ -76,6 +76,13 @@ $(document).ready(function(){
     //Clicked on the 'x' icon to delete
     $(document).on("click","#delete", function(){
         if(debug){console.log("EVENT: clicked on trash icon: ", $(this).attr("data-topic"))};
+        // TODO:
+        var topic = $(this).attr("data-topic");
+        //delete the parent button of that 'x' using the data-topic to select it
+        $(`button[data-topic="${topic}"]`).remove();
+        var index = gifApp.topics.indexOf(topic);
+        gifApp.topics.splice(index, 1);
+        storeTopicsToLocalStorage();
         return false;
 
     });
@@ -136,7 +143,8 @@ function displayGifs(data){
         } else {
             imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_still.url, "data-swap":gifs[startAt+i].images.fixed_width.url})
             .addClass("gif m-2 border rounded");  //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
-        } 
+        }
+        // $("<div>").
         $("#gifs").append(imgElement);
     }
 }
@@ -158,20 +166,23 @@ function hideSeeMore() {
 
 function restoreButtons(){
     if(debug){console.log("Function: restoreButtons")}
-    var list = localStorage.getItem("topics");
+    var topics = localStorage.getItem("topics");
     
-    //null is returned if 'topics' does not exist, i.e. first run ever
-    if(list!=null) {
-        $("#btn-gif").empty();
-        gifApp.topics = JSON.parse(list);
-        //make a button for each topic
-        gifApp.topics.forEach(function(topic){
-            displayAButton(topic);
-        });
-        } else {
-        console.log("there are no topics, please add some")
-        return false;
+    //if 'topics' does not exist yet in localstorage
+    if(topics===null){
+        console.log("placing some sample topics")
+        gifApp.topics = ['dancing', 'jumping','sleeping','walking', 'crawling'];
+        storeTopicsToLocalStorage();        
+        //read again
+        topics = localStorage.getItem("topics");
     }
+    
+    $("#btn-gif").empty();
+    gifApp.topics = JSON.parse(topics);
+    //make a button for each
+    gifApp.topics.forEach(function(topic){
+        displayAButton(topic);
+    });
  }
 
 function addANewTopic(newTopic) {
