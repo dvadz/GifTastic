@@ -132,7 +132,7 @@ function displayGifs(data){
 
     var startAt = gifApp.startAt,
         gifs = data.data,
-        imgElement,
+        imgElement;
 
     for( var i = 0; i < 10; i++ ){
         if(debug) {console.log("displaying a gif")}
