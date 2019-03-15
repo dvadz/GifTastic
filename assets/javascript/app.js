@@ -137,20 +137,37 @@ function displayGifs(data){
 
     for( var i = 0; i < 10; i++ ){
         if(debug) {console.log("displaying a gif")}
+        var rating = gifs[startAt+i].rating,
+            title = gifs[startAt+i].title,
+            width = gifs[startAt+i].images.fixed_width_still.width,
+            height = gifs[startAt+i].images.fixed_width_still.height;
+
+            if(title.length>23) {
+                title = title.substring(0,21) + "...";
+            }
+        //build the card-body
+        var pRating = $("<p></p>").text("rating: " + rating).addClass("rating"),
+            pTitle  = $("<p></p>").text(title).addClass("title");
+        var cardBody = $("<div></div>").addClass("card-body").append(pTitle).append(pRating);
+
         if(isSmall) {
-            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_small_still.url, "data-swap":gifs[startAt+i].images.fixed_width_small.url})
-            .addClass("gif m-2 border rounded");          //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
+            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_small_still.url, 
+                                          "data-swap":gifs[startAt+i].images.fixed_width_small.url});
         } else {
-            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_still.url, "data-swap":gifs[startAt+i].images.fixed_width.url})
-            .addClass("gif m-2 border rounded");  //gif.images.fixed_height_small_still.url     gif.images.fixed_height_small.url
+            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_still.url, 
+                                          "data-swap":gifs[startAt+i].images.fixed_width.url})
         }
-        // $("<div>").
-        $("#gifs").append(imgElement);
+        imgElement.addClass("gif rounded");
+
+        var gifCard = $("<div></div>").append(imgElement).addClass("card m-2 border-dark").append(cardBody);
+
+        $("#div_gifs").append(gifCard);
+
     }
 }
 
 function initialize (){
-    $("#gifs").empty();
+    $("#div_gifs").empty();
     gifApp.startAt = 0;
     gifApp.limit = 10;
 }
@@ -205,7 +222,7 @@ function storeTopicsToLocalStorage() {
 
 function displayAButton(topic) {
     var deleteIcon = $("<span id='delete' >&#9747</span>").attr({"data-topic": topic, "title": "remove this topic"});
-    var buttonElement = $("<button></button>").addClass("action btn btn-sm btn-outline-primary m-1")
+    var buttonElement = $("<button></button>").addClass("action btn btn-sm btn-outline-dark m-1")
             .attr("data-topic", topic).text(topic).append(" ", deleteIcon);
     $("#btn-gif").append(buttonElement);
 }

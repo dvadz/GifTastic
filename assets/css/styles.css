@@ -14,9 +14,7 @@
 #brand-s {
     color: magenta;
 }
-img {
-    max-height: 200px;
-}
+
 img:hover {
     cursor: pointer;
 }
@@ -26,8 +24,27 @@ img:hover {
 }
 #delete {
     color: rgb(240, 239, 239);
-    font-size: .7rem;
+        /* font-size: .7rem; */
 }
 form {
     display: flex;
+}
+
+img {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+}
+.card {
+    background-color: black;
+    width: 202px;
+}
+.card-body {
+    padding: 5px;
+    background-color: black;
+    color: gray
+}
+p {
+    margin: 0;
+    padding: 0;
 }
