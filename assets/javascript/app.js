@@ -133,7 +133,6 @@ function displayGifs(data){
     var startAt = gifApp.startAt,
         gifs = data.data,
         imgElement,
-        isSmall = (document.documentElement.clientWidth<400) ? true : false ;
 
     for( var i = 0; i < 10; i++ ){
         if(debug) {console.log("displaying a gif")}
@@ -150,13 +149,9 @@ function displayGifs(data){
             pTitle  = $("<p></p>").text(title).addClass("title");
         var cardBody = $("<div></div>").addClass("card-body").append(pTitle).append(pRating);
 
-        if(isSmall) {
-            imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_small_still.url, 
-                                          "data-swap":gifs[startAt+i].images.fixed_width_small.url});
-        } else {
             imgElement = $("<img>").attr({"src":gifs[startAt+i].images.fixed_width_still.url, 
                                           "data-swap":gifs[startAt+i].images.fixed_width.url})
-        }
+
         imgElement.addClass("gif rounded");
 
         var gifCard = $("<div></div>").append(imgElement).addClass("card m-2 border-dark").append(cardBody);
